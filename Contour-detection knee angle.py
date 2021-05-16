@@ -68,7 +68,7 @@ while(True): #Jeden Frame laden
 
     center = None
 
-    found_point_list = []
+    found_points_list = []
     circularity_list = []
     contour_list = []
 
@@ -87,45 +87,45 @@ while(True): #Jeden Frame laden
             cX = int(M["m10"] / M["m00"])
             cY = int(M["m01"] / M["m00"])
 
-            found_point_list.append((cX, cY))
+            found_points_list.append((cX, cY))
             circularity_list.append(Circularity)
             contour_list.append(c)
         else:
             continue
 
-    while len(found_point_list) > 3: #Falls mehr als 3 Punkte gefunden wurden entferne die 'Schlechtesten'
+    while len(found_points_list) > 3: #Falls mehr als 3 Punkte gefunden wurden entferne die 'Schlechtesten'
         index = circularity_list.index(min(circularity_list))
-        found_point_list.pop(index)
+        found_points_list.pop(index)
         circularity_list.pop(index)
         contour_list.pop(index)
 
-    write_centers.append(found_point_list)
+    write_centers.append(found_points_list)
     write_contours.append(contour_list)
 
-    if len(found_point_list) < 3: #wenn weniger als 3 Marker entdeckt wurden, werden die Umrandungen und Schwerpunkte nicht eingezeichnet
+    if len(found_points_list) < 3: #wenn weniger als 3 Marker entdeckt wurden, werden die Umrandungen und Schwerpunkte nicht eingezeichnet
         pass
     else:
-        a = np.array(found_point_list)
+        a = np.array(found_points_list)
         cv2.drawContours(frame, [a], 0, (255, 255, 255), 2)
 
         for i in range(3):
             cv2.drawContours(frame, [contour_list[i]], -1, (0, 255, 0), 2)
-            cv2.circle(frame, found_point_list[0], 7, (255, 0, 0), -1)
-            cv2.circle(frame, found_point_list[1], 7, (255, 0, 0), -1)
-            cv2.circle(frame, found_point_list[2], 7, (255, 0, 0), -1)
-            cv2.putText(frame, "P{}".format(i+1), (found_point_list[i][0] - 10, found_point_list[i][1] - 10),
+            cv2.circle(frame, found_points_list[0], 7, (255, 0, 0), -1)
+            cv2.circle(frame, found_points_list[1], 7, (255, 0, 0), -1)
+            cv2.circle(frame, found_points_list[2], 7, (255, 0, 0), -1)
+            cv2.putText(frame, "P{}".format(i+1), (found_points_list[i][0] - 10, found_points_list[i][1] - 10),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
 
     try:
 
-        P1 = (found_point_list[0][0], found_point_list[0][1])
-        P2 = (found_point_list[1][0], found_point_list[1][1]) # um P2 wird der winkel berechnet
-        P3 = (found_point_list[2][0], found_point_list[2][1])
+        P1 = (found_points_list[0][0], found_points_list[0][1])
+        P2 = (found_points_list[1][0], found_points_list[1][1]) # um P2 wird der winkel berechnet
+        P3 = (found_points_list[2][0], found_points_list[2][1])
 
         if P2[0] < P3[0]:
 
-            P3 = (found_point_list[1][0], found_point_list[1][1])
-            P2 = (found_point_list[2][0], found_point_list[2][1])
+            P3 = (found_points_list[1][0], found_points_list[1][1])
+            P2 = (found_points_list[2][0], found_points_list[2][1])
 
 
         beta = np.rad2deg(math.atan2(abs(P2[0]-P1[0]), abs(P2[1]-P1[1])))
